@@ -1,0 +1,1966 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smartfuture TCF MVP (Preview Only)</title>
+  <style>
+    :root{
+      /* === Light mode tokens (same layout, same geometry) === */
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+      --bg:#f6fbf7;
+      --panel:#ffffff;
+      --panel2:#f1faf3;
+      --card:#ffffff;
+
+      --muted:#52705f;
+      --text:#0f1f16;
+      --line:rgba(50, 90, 67, 0.051);
+
+      --accent:#22c55e;
+      --accent2:#86efac;
+
+      --good:#16a34a;
+      --warn:#d97706;
+      --bad:#e11d48;
+
+      --shadow: 0 10px 26px rgba(15,31,22,.10);
+      --radius: 18px;
+      --radius2: 14px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(34,197,94,.12), transparent 60%),
+        radial-gradient(1000px 700px at 80% 20%, rgba(134,239,172,.18), transparent 60%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit}
+
+    .app{min-height:100vh; display:grid; grid-template-columns: 290px 1fr;}
+
+    .sidebar{
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(241,250,243,.92));
+      backdrop-filter: blur(10px);
+      position:relative;
+      border-right:1px solid var(--line);
+    }
+
+    .card, .brand, .rolebox{
+      background: rgba(255,255,255,.86);
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 12px;
+    
+      background: rgba(255,255,255,.86);
+ 
+      margin:8px 8px 4px;
+    }
+    .logo{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        width:auto;
+        height:auto;
+        border-radius:0;
+        background:none;
+        }
+    .brand h1{
+      font-size:14px; margin:0; line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .brand p{margin:2px 0 0; font-size:12px; color:var(--muted)}
+
+    .rolebox{
+      margin:0 18px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+    }
+
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(15,31,22,.03);
+      font-size:12px; color:var(--muted);
+    }
+
+    .nav{
+      margin:14px 18px 0;
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .nav button{
+      width:100%;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid transparent;
+      background: transparent;
+      color:var(--text);
+      cursor:pointer;
+      transition: .15s ease;
+      text-align:left;
+      font-size:13px;
+    }
+    .nav button:hover{
+      background: rgba(15,31,22,.03);
+      border-color:var(--line)
+    }
+    .nav button.active{
+      background: linear-gradient(135deg, rgba(34,197,94,.12), rgba(134,239,172,.16));
+      border-color: rgba(34,197,94,.22);
+    }
+    .nav small{color:var(--muted)}
+
+    .sidebar .footer{
+      position:absolute; left:18px; right:18px; bottom:18px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.86);
+      padding:12px;
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+      box-shadow: var(--shadow);
+    }
+    .sidebar .footer .hint{font-size:12px; color:var(--muted); line-height:1.4}
+
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(15,31,22,.03);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      transition:.15s ease;
+      font-weight:600;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(15,31,22,.05)}
+    .btn.primary{
+      border-color: rgba(34,197,94,.28);
+      background: linear-gradient(135deg, rgba(34,197,94,.14), rgba(134,239,172,.18));
+    }
+    .btn.danger{
+      border-color: rgba(225,29,72,.22);
+      background: rgba(225,29,72,.06);
+    }
+
+    .content{padding:22px 24px 28px;}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:16px;
+    }
+    .topbar h2{margin:0; font-size:18px; letter-spacing:.2px}
+    .topbar .sub{color:var(--muted); font-size:12px; margin-top:4px}
+    .topbar .right{display:flex; gap:10px; align-items:center}
+
+    .select, .input, textarea{
+      width:100%;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.86);
+      color: var(--text);
+      outline:none;
+      box-shadow: 0 6px 18px rgba(15,31,22,.05);
+    }
+    textarea{min-height:110px; resize:vertical;}
+    label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .card{
+      grid-column: span 12;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      background: rgba(255,255,255,.92);
+    }
+    .card .hd strong{font-size:13px}
+    .card .bd{padding:14px 16px}
+
+    .muted{color:var(--muted)}
+
+    .kpi{
+      grid-column: span 3;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+    }
+    .kpi .n{font-size:22px; font-weight:800; letter-spacing:.2px}
+    .kpi .t{font-size:12px; color:var(--muted); margin-top:6px}
+
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(15,31,22,.03);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .tag.good{border-color: rgba(22,163,74,.22); background: rgba(22,163,74,.08); color:#0f3a22}
+    .tag.warn{border-color: rgba(217,119,6,.22); background: rgba(217,119,6,.08); color:#4a2b00}
+    .tag.bad{border-color: rgba(225,29,72,.22); background: rgba(225,29,72,.08); color:#4a0c1a}
+
+    .divider{height:1px; background:var(--line); margin:14px 0}
+    .cols{display:grid; grid-template-columns: 1fr 1fr; gap:14px;}
+    .cols3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:14px;}
+
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.86);
+    }
+    .table th, .table td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--line);
+      font-size:12px;
+      text-align:left;
+      color: var(--text);
+      vertical-align:top;
+    }
+    .table th{
+      color:var(--muted);
+      font-weight:700;
+      background: rgba(15,31,22,.02);
+    }
+    .table tr:last-child td{border-bottom:none}
+
+    .hintbox{
+      border:1px dashed rgba(15,31,22,.18);
+      border-radius: var(--radius);
+      padding:12px 14px;
+      background: rgba(255,255,255,.86);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      box-shadow: 0 8px 22px rgba(15,31,22,.06);
+    }
+
+    /* Login overlay */
+    .overlay{
+      position:fixed; inset:0;
+      display:grid; place-items:center;
+      background: rgba(15,31,22,.35);
+      backdrop-filter: blur(10px);
+      z-index:50;
+    }
+    .login{
+      width:min(520px, 92vw);
+      border:1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(241,250,243,.92));
+      box-shadow: 0 30px 80px rgba(15,31,22,.20);
+      overflow:hidden;
+    }
+    .login .top{
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      display:flex; justify-content:space-between; align-items:center;
+      background: rgba(255,255,255,.92);
+    }
+    .login .top strong{font-size:14px}
+    .login .body{padding:16px 18px}
+    .login .actions{display:flex; gap:10px; justify-content:flex-end; margin-top:12px}
+    .note{
+      font-size:12px; color:var(--muted); margin-top:10px; line-height:1.35
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .app{grid-template-columns: 1fr;}
+      .sidebar{position:relative; height:auto}
+      .sidebar .footer{position:relative; left:auto; right:auto; bottom:auto; margin:14px 18px 18px}
+      .kpi{grid-column: span 6}
+      .cols, .cols3{grid-template-columns: 1fr}
+    }
+    @media (max-width: 560px){
+      .kpi{grid-column: span 12}
+    }
+  </style>
+</head>
+<body>
+
+<div id="loginOverlay" class="overlay">
+  <div class="login" role="dialog" aria-modal="true" aria-label="Login">
+    <div class="top">
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div class="logo" aria-hidden="true">SF</div>
+        <div>
+          <strong>TCF Management Portal (MVP Preview)</strong>
+          <div class="muted" style="font-size:12px;margin-top:2px;">No database • No integrations • Forms + dashboards only</div>
+        </div>
+      </div>
+      <span class="pill">Preview</span>
+    </div>
+    <div class="body">
+      <div class="cols">
+        <div>
+          <label>Email</label>
+          <input id="loginEmail" class="input" placeholder="name@tcf.sg" />
+        </div>
+        <div>
+          <label>Password</label>
+          <input id="loginPw" type="password" class="input" placeholder="••••••••" />
+        </div>
+      </div>
+
+      <div class="cols" style="margin-top:12px;">
+        <div>
+          <label>Facility</label>
+          <select id="loginFacility" class="select">
+            <option>TCF West</option>
+            <option>TCF East</option>
+          </select>
+        </div>
+        <div>
+          <label>Role</label>
+          <select id="loginRole" class="select">
+            <option>Admin</option>
+            <option>Nurse</option>
+            <option>Doctor</option>
+            <option>Allied Health</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="cols" style="margin-top:12px;">
+        <div>
+          <label>2FA Code (optional)</label>
+          <input id="login2fa" class="input" placeholder="123456" />
+        </div>
+        <div>
+          <label>Demo Mode</label>
+          <select id="loginDemo" class="select">
+            <option>On (recommended)</option>
+            <option>Off</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="note">
+        Tip: This is a <b>static preview</b>. Submitting forms will only show a temporary “preview list” in memory and resets on refresh.
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="fillDemo()">Autofill Demo</button>
+        <button class="btn primary" onclick="doLogin()">Enter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="appRoot" style="display:none;">
+  <aside class="sidebar">
+    <div class="brand">
+    <div class="logo" style="background:none; padding:0;">
+  <img src="https://pancaremedical.sg/images/logo.png"
+       alt="Pancare Medical"
+       style="height:50px; width:auto; object-fit:contain;">
+</div>
+<div>
+
+</div>
+
+    </div>
+
+    <div class="rolebox">
+      <div class="row" style="justify-content:space-between; align-items:center;">
+        <span class="pill" id="pillFacility">TCF West</span>
+        <span class="pill" id="pillRole">Admin</span>
+      </div>
+    </div>
+
+    <div class="nav" id="nav">
+      <button class="active" data-view="dashboard" onclick="showView('dashboard', this)">Dashboard <small>Overview</small></button>
+      <button data-view="admissions" onclick="showView('admissions', this)">Admissions & Profiles <small>Intake</small></button>
+      <button data-view="notes" onclick="showView('notes', this)">Clinical Notes <small>Documentation</small></button>
+      <button data-view="escalations" onclick="showView('escalations', this)">Escalations <small>SLA & Audit</small></button>
+      <button data-view="vitals" onclick="showView('vitals', this)">Vitals & Observations <small>Trends</small></button>
+      <button data-view="visitors" onclick="showView('visitors', this)">Visitor Management <small>Compliance</small></button>
+      <button data-view="tasks" onclick="showView('tasks', this)">Tasks & Workflows <small>To-dos</small></button>
+      <button data-view="incidents" onclick="showView('incidents', this)">Incidents & Safety <small>Risk</small></button>
+      <button data-view="discharge" onclick="showView('discharge', this)">Discharge Planning <small>Checklist</small></button>
+      <button data-view="reports" onclick="showView('reports', this)">Reporting <small>Exports</small></button>
+      <button data-view="admin" onclick="showView('admin', this)">Admin Settings <small>Config</small></button>
+    </div>
+
+    <div class="footer">
+      <div class="hint">
+        <b>Preview Mode</b><br/>
+        Reset anytime.<br/>
+        <span class="muted"></span>
+      </div>
+      <button class="btn danger" onclick="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <div class="topbar">
+        <div>
+          <h2>Dashboard</h2>
+          <div class="sub">Operational snapshot (sample numbers)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="seedSample()">Seed sample previews</button>
+          <button class="btn primary" onclick="clearPreviews()">Clear previews</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="kpi"><div class="n" id="kpiInpatients">46</div><div class="t">Total inpatients</div></div>
+        <div class="kpi"><div class="n" id="kpiAdmissions">4</div><div class="t">New admissions today</div></div>
+        <div class="kpi"><div class="n" id="kpiEscOpen">7</div><div class="t">Open escalations</div></div>
+        <div class="kpi"><div class="n" id="kpiVitals">12</div><div class="t">Vitals alerts (24h)</div></div>
+
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd">
+            <strong>Priority Panel</strong>
+            <span class="pill">In-app only</span>
+          </div>
+          <div class="bd">
+            <div class="row" style="gap:10px;">
+              <span class="tag bad">🔴 2 Critical escalations</span>
+              <span class="tag warn">🟠 5 Abnormal vitals</span>
+              <span class="tag warn">🟡 3 Overdue tasks</span>
+            </div>
+            <div class="divider"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Type</th><th>Patient</th><th>Ward/Bed</th><th>Summary</th><th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="priorityRows">
+                <tr>
+                  <td>Escalation</td><td>Mr Tan, 72</td><td>West • W2 • B14</td><td>Aspiration risk during feeding</td><td><span class="tag bad">Critical • Open</span></td>
+                </tr>
+                <tr>
+                  <td>Vitals</td><td>Mdm Lim, 80</td><td>East • W1 • B03</td><td>SpO₂ 88% recorded</td><td><span class="tag warn">Alert • Review</span></td>
+                </tr>
+                <tr>
+                  <td>Task</td><td>—</td><td>West • Ward 3</td><td>Overdue: Weekly stock check (med room)</td><td><span class="tag warn">Overdue</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="note">This is a sample overview. Use it to demonstrate management visibility + escalation accountability.</div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd">
+            <strong>Recent Preview Submissions</strong>
+            <span class="pill">Session only</span>
+          </div>
+          <div class="bd">
+            <div id="recentList" class="hintbox">No preview submissions yet. Submit any form and it’ll appear here (in-memory).</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMISSIONS -->
+    <section id="view-admissions" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Admissions & Patient Profile</h2>
+          <div class="sub">Digital intake + bed allocation + documents (preview only)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('admission')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('admission')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 8;">
+          <div class="hd"><strong>Admission Intake Form</strong><span class="pill">Must-have</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Full Name</label>
+                <input class="input" id="adm_name" placeholder="Mr Tan Wei Ming" />
+              </div>
+              <div>
+                <label>NRIC / FIN</label>
+                <input class="input" id="adm_nric" placeholder="S1234567A" />
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Date of Birth</label>
+                <input class="input" id="adm_dob" type="date" />
+              </div>
+              <div>
+                <label>Gender</label>
+                <select class="select" id="adm_gender">
+                  <option>Male</option><option>Female</option><option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Contact Number</label>
+                <input class="input" id="adm_phone" placeholder="+65 9XXX XXXX" />
+              </div>
+              <div>
+                <label>Address</label>
+                <input class="input" id="adm_addr" placeholder="Singapore" />
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="cols">
+              <div>
+                <label>Next of Kin Name</label>
+                <input class="input" id="adm_nok" placeholder="Ms Tan Mei" />
+              </div>
+              <div>
+                <label>Relationship</label>
+                <input class="input" id="adm_nok_rel" placeholder="Daughter" />
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Next of Kin Contact</label>
+                <input class="input" id="adm_nok_phone" placeholder="+65 8XXX XXXX" />
+              </div>
+              <div>
+                <label>Referral Source</label>
+                <select class="select" id="adm_ref">
+                  <option>Hospital</option>
+                  <option>Polyclinic</option>
+                  <option>Community Partner</option>
+                  <option>Self / Family</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Diagnosis / Problem List</label>
+                <input class="input" id="adm_dx" placeholder="Post-stroke • Dysphagia • HTN" />
+              </div>
+              <div>
+                <label>Isolation Status</label>
+                <select class="select" id="adm_iso">
+                  <option>No</option><option>Yes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Ward</label>
+                <select class="select" id="adm_ward">
+                  <option>Ward 1</option><option>Ward 2</option><option>Ward 3</option>
+                </select>
+              </div>
+              <div>
+                <label>Room / Bed</label>
+                <input class="input" id="adm_bed" placeholder="R12 • Bed 14" />
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Admission Date/Time</label>
+                <input class="input" id="adm_dt" type="datetime-local" />
+              </div>
+              <div>
+                <label>Assigned Clinician</label>
+                <input class="input" id="adm_doc" placeholder="Doctor on Duty" />
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Secure Document Uploads (preview)</label>
+              <input class="input" id="adm_docs" type="file" multiple />
+              <div class="note">Uploads aren’t stored. This is only to show the field exists.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 4;">
+          <div class="hd"><strong>Admission Checklist</strong><span class="pill">Tasks</span></div>
+          <div class="bd">
+            <div class="row" style="flex-direction:column; align-items:flex-start;">
+              <label class="tag"><input type="checkbox" id="chk_consent" /> Consent signed</label>
+              <label class="tag"><input type="checkbox" id="chk_ref" /> Referral letter uploaded</label>
+              <label class="tag"><input type="checkbox" id="chk_medrec" /> Medication reconciliation</label>
+              <label class="tag"><input type="checkbox" id="chk_fall" /> Fall risk assessment</label>
+            </div>
+
+            <div class="divider"></div>
+
+            <label>Patient Status Lifecycle</label>
+            <select class="select" id="adm_status">
+              <option>Pending</option>
+              <option>Admitted</option>
+              <option>In Care</option>
+              <option>Discharge Planning</option>
+              <option>Discharged</option>
+            </select>
+
+            <div class="divider"></div>
+
+            
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 12;">
+          <div class="hd"><strong>Patient Registry (Preview)</strong><span class="pill">Searchable</span></div>
+          <div class="bd">
+            <div class="cols3">
+              <div>
+                <label>Search</label>
+                <input class="input" placeholder="Name / NRIC / Bed" />
+              </div>
+              <div>
+                <label>Filter: Ward</label>
+                <select class="select">
+                  <option>All</option><option>Ward 1</option><option>Ward 2</option><option>Ward 3</option>
+                </select>
+              </div>
+              <div>
+                <label>Filter: Status</label>
+                <select class="select">
+                  <option>All</option><option>Pending</option><option>Admitted</option><option>In Care</option><option>Discharge Planning</option><option>Discharged</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <table class="table">
+                <thead><tr><th>Patient</th><th>NRIC</th><th>Ward/Bed</th><th>Status</th><th>Primary Dx</th></tr></thead>
+                <tbody>
+                  <tr><td>Mr Tan, 72</td><td>S1234567A</td><td>West • W2 • B14</td><td><span class="tag warn">In Care</span></td><td>Post-stroke, Dysphagia</td></tr>
+                  <tr><td>Mdm Lim, 80</td><td>S7654321B</td><td>East • W1 • B03</td><td><span class="tag good">Admitted</span></td><td>CHF, Diabetes</td></tr>
+                </tbody>
+              </table>
+              <div class="note">Static sample table (preview). In real build, clicking a row opens full patient profile.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- NOTES -->
+    <section id="view-notes" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Clinical Notes</h2>
+          <div class="sub">Role-based templates + tags + attachments + “Important” pin (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('note')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('note')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd"><strong>Add Clinical Note</strong><span class="pill">Documentation</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Patient</label>
+                <select class="select" id="note_patient">
+                  <option>Mr Tan (West • W2 • B14)</option>
+                  <option>Mdm Lim (East • W1 • B03)</option>
+                </select>
+              </div>
+              <div>
+                <label>Author Role</label>
+                <select class="select" id="note_role">
+                  <option>Nursing</option>
+                  <option>Doctor</option>
+                  <option>Speech Therapy</option>
+                  <option>Allied Health</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Note Category Tag</label>
+                <select class="select" id="note_tag">
+                  <option>General</option>
+                  <option>Swallowing</option>
+                  <option>Aspiration Risk</option>
+                  <option>Mobility</option>
+                  <option>Cognitive</option>
+                  <option>Wound Care</option>
+                </select>
+              </div>
+              <div>
+                <label>Urgency</label>
+                <select class="select" id="note_urg">
+                  <option>Routine</option>
+                  <option>Important</option>
+                  <option>Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Note Content</label>
+              <textarea id="note_text" placeholder="Write note here..."></textarea>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Attachments (preview)</label>
+                <input class="input" id="note_file" type="file" multiple />
+              </div>
+              <div>
+                <label>Options</label>
+                <div class="row">
+                  <label class="tag"><input type="checkbox" id="note_pin" /> Mark as “Important”</label>
+                  <label class="tag"><input type="checkbox" id="note_escalate" /> Create escalation from note</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="note">In real build: filtering by note type/author/date/tag/escalation status + pinning important notes.</div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd"><strong>Notes Feed (Preview)</strong><span class="pill">Filtered</span></div>
+          <div class="bd">
+            <div class="cols3">
+              <div>
+                <label>Filter: Tag</label>
+                <select class="select"><option>All</option><option>Swallowing</option><option>Mobility</option></select>
+              </div>
+              <div>
+                <label>Filter: Author</label>
+                <select class="select"><option>All</option><option>Nursing</option><option>Doctor</option></select>
+              </div>
+              <div>
+                <label>Date</label>
+                <input class="input" type="date" />
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="hintbox">
+              <b>Mr Tan</b> • Nursing • Swallowing • <span class="tag warn">Important</span><br/>
+              Patient coughing during feeding, advised thickened fluids. Monitor SpO₂.
+              <div class="note">Linked escalation: Speech therapist review requested.</div>
+            </div>
+
+            <div style="margin-top:10px;" class="hintbox">
+              <b>Mdm Lim</b> • Doctor • General • <span class="tag good">Routine</span><br/>
+              Stable overnight. Continue monitoring BP and glucose. Consider discharge planning if stable 48h.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESCALATIONS -->
+    <section id="view-escalations" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Escalations</h2>
+          <div class="sub">Create → assign → acknowledge → resolve + audit trail (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('escalation')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('escalation')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd"><strong>Create Escalation</strong><span class="pill">Configurable</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Linked Patient</label>
+                <select class="select" id="esc_patient">
+                  <option>Mr Tan (West • W2 • B14)</option>
+                  <option>Mdm Lim (East • W1 • B03)</option>
+                </select>
+              </div>
+              <div>
+                <label>From Clinical Note (optional)</label>
+                <select class="select" id="esc_note">
+                  <option>— None —</option>
+                  <option>Aspiration risk during feeding (Nursing)</option>
+                  <option>Low SpO₂ alert note (Nursing)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Escalation Type</label>
+                <select class="select" id="esc_type">
+                  <option>Clinical</option>
+                  <option>Medication</option>
+                  <option>Safety</option>
+                  <option>Operational</option>
+                </select>
+              </div>
+              <div>
+                <label>Priority</label>
+                <select class="select" id="esc_priority">
+                  <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Assign To (role / individual)</label>
+                <select class="select" id="esc_assign">
+                  <option>Doctor on Duty</option>
+                  <option>Speech Therapist Lead</option>
+                  <option>Nurse-in-Charge</option>
+                </select>
+              </div>
+              <div>
+                <label>SLA Deadline</label>
+                <input class="input" id="esc_sla" type="datetime-local" />
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Description / Context</label>
+              <textarea id="esc_desc" placeholder="Describe the escalation and desired action..."></textarea>
+            </div>
+
+            <div class="divider"></div>
+
+            <label>Status (preview control)</label>
+            <select class="select" id="esc_status">
+              <option>Open</option>
+              <option>Acknowledged</option>
+              <option>In Progress</option>
+              <option>Resolved</option>
+              <option>Closed</option>
+            </select>
+
+            <div class="note">In real build: acknowledgement user/time, resolution notes, and full audit log by event.</div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd"><strong>Escalation Queue (Preview)</strong><span class="pill">SLA</span></div>
+          <div class="bd">
+            <table class="table">
+              <thead><tr><th>Patient</th><th>Type</th><th>Priority</th><th>Assigned</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Mr Tan</td><td>Clinical</td><td><span class="tag bad">Critical</span></td><td>Speech Lead</td><td><span class="tag bad">Open</span></td></tr>
+                <tr><td>Mdm Lim</td><td>Clinical</td><td><span class="tag warn">High</span></td><td>Doctor</td><td><span class="tag warn">In Progress</span></td></tr>
+              </tbody>
+            </table>
+
+            <div class="divider"></div>
+
+            <div class="hintbox">
+              <b>Audit Trail (sample)</b><br/>
+              Created by Nursing (10:12)<br/>
+              Assigned to Speech Lead (10:12)<br/>
+              Acknowledged (10:24)<br/>
+              Resolution notes pending…
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VITALS -->
+    <section id="view-vitals" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Vitals & Observations</h2>
+          <div class="sub">Manual entry now, device integration later (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('vitals')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('vitals')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd"><strong>Add Vitals Entry</strong><span class="pill">Threshold alerts</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Patient</label>
+                <select class="select" id="vit_patient">
+                  <option>Mr Tan (West • W2 • B14)</option>
+                  <option>Mdm Lim (East • W1 • B03)</option>
+                </select>
+              </div>
+              <div>
+                <label>Source</label>
+                <select class="select" id="vit_source">
+                  <option>Manual</option>
+                  <option>Device (future)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols3" style="margin-top:12px;">
+              <div><label>BP (Sys)</label><input class="input" id="vit_bp_sys" type="number" placeholder="120" /></div>
+              <div><label>BP (Dia)</label><input class="input" id="vit_bp_dia" type="number" placeholder="80" /></div>
+              <div><label>Heart Rate</label><input class="input" id="vit_hr" type="number" placeholder="72" /></div>
+            </div>
+
+            <div class="cols3" style="margin-top:12px;">
+              <div><label>SpO₂</label><input class="input" id="vit_spo2" type="number" placeholder="98" /></div>
+              <div><label>Temp (°C)</label><input class="input" id="vit_temp" type="number" step="0.1" placeholder="36.7" /></div>
+              <div><label>Resp. Rate</label><input class="input" id="vit_rr" type="number" placeholder="16" /></div>
+            </div>
+
+            <div class="cols3" style="margin-top:12px;">
+              <div><label>Pain Score (0–10)</label><input class="input" id="vit_pain" type="number" min="0" max="10" placeholder="0" /></div>
+              <div><label>Weight (kg)</label><input class="input" id="vit_wt" type="number" step="0.1" placeholder="65.0" /></div>
+              <div><label>Glucose (mmol/L)</label><input class="input" id="vit_glu" type="number" step="0.1" placeholder="6.1" /></div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Notes</label>
+              <textarea id="vit_note" placeholder="Context, symptoms, actions taken..."></textarea>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Threshold Rule (preview)</label>
+                <select class="select" id="vit_rule">
+                  <option>Use default thresholds</option>
+                  <option>Use patient-specific baseline</option>
+                </select>
+              </div>
+              <div>
+                <label>Automation</label>
+                <div class="row">
+                  <label class="tag"><input type="checkbox" id="vit_alert" checked /> Flag abnormal values</label>
+                  <label class="tag"><input type="checkbox" id="vit_escalate" /> Create escalation if critical</label>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd"><strong>Trends (Preview)</strong><span class="pill">Charts later</span></div>
+          <div class="bd">
+            
+
+            <div class="divider"></div>
+
+            <table class="table">
+              <thead><tr><th>Date</th><th>BP</th><th>HR</th><th>SpO₂</th><th>Flag</th></tr></thead>
+              <tbody>
+                <tr><td>Today</td><td>138/86</td><td>88</td><td>92%</td><td><span class="tag warn">Alert</span></td></tr>
+                <tr><td>Yesterday</td><td>128/82</td><td>76</td><td>97%</td><td><span class="tag good">OK</span></td></tr>
+                <tr><td>2d ago</td><td>122/80</td><td>72</td><td>98%</td><td><span class="tag good">OK</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISITORS -->
+    <section id="view-visitors" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Visitor Management</h2>
+          <div class="sub">Pre-reg + walk-in check-in/out + restrictions (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('visitor')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('visitor')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd"><strong>Visitor Check-In</strong><span class="pill">Compliance</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Visitor Name</label>
+                <input class="input" id="vis_name" placeholder="Ms Tan Mei" />
+              </div>
+              <div>
+                <label>Contact Number</label>
+                <input class="input" id="vis_phone" placeholder="+65 8XXX XXXX" />
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Relationship</label>
+                <input class="input" id="vis_rel" placeholder="Daughter" />
+              </div>
+              <div>
+                <label>Patient Visiting</label>
+                <select class="select" id="vis_patient">
+                  <option>Mr Tan (West • W2 • B14)</option>
+                  <option>Mdm Lim (East • W1 • B03)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Visit Purpose</label>
+                <input class="input" id="vis_purpose" placeholder="Routine visitation" />
+              </div>
+              <div>
+                <label>Time Slot</label>
+                <select class="select" id="vis_slot">
+                  <option>10:00–11:00</option><option>11:00–12:00</option><option>14:00–15:00</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>ID / Photo (optional, preview)</label>
+                <input class="input" id="vis_id" type="file" />
+              </div>
+              <div>
+                <label>Restriction Controls</label>
+                <div class="row">
+                  <label class="tag"><input type="checkbox" id="vis_iso" /> Isolation precautions</label>
+                  <label class="tag"><input type="checkbox" id="vis_badge" /> Print badge (future)</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="cols">
+              <div>
+                <label>Check-in Timestamp (preview)</label>
+                <input class="input" id="vis_in" type="datetime-local" />
+              </div>
+              <div>
+                <label>Check-out Timestamp (preview)</label>
+                <input class="input" id="vis_out" type="datetime-local" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd"><strong>Daily Visitor Log (Preview)</strong><span class="pill">Audit</span></div>
+          <div class="bd">
+            <table class="table">
+              <thead><tr><th>Visitor</th><th>Patient</th><th>In</th><th>Out</th><th>Flag</th></tr></thead>
+              <tbody>
+                <tr><td>Ms Tan Mei</td><td>Mr Tan</td><td>10:05</td><td>10:55</td><td><span class="tag good">OK</span></td></tr>
+                <tr><td>Mr Goh</td><td>Mdm Lim</td><td>14:10</td><td>—</td><td><span class="tag warn">In facility</span></td></tr>
+              </tbody>
+            </table>
+
+            <div class="divider"></div>
+
+            <div class="row">
+              <button class="btn" onclick="fakeExport('Visitor log')">Export CSV (fake)</button>
+              <button class="btn" onclick="fakeExport('Visitor report')">Export PDF (fake)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TASKS -->
+    <section id="view-tasks" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Task & Workflow Management</h2>
+          <div class="sub">Assignments + recurring tasks + reminders (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('task')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('task')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd"><strong>Create Task</strong><span class="pill">Operations</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Task Name</label>
+                <input class="input" id="task_name" placeholder="Nursing rounds • Ward 2" />
+              </div>
+              <div>
+                <label>Assign To (role/user)</label>
+                <select class="select" id="task_assign">
+                  <option>Nurse-in-Charge</option>
+                  <option>Nursing Team</option>
+                  <option>Doctor on Duty</option>
+                  <option>Speech Therapy</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Linked Patient (optional)</label>
+                <select class="select" id="task_patient">
+                  <option>— None —</option>
+                  <option>Mr Tan</option>
+                  <option>Mdm Lim</option>
+                </select>
+              </div>
+              <div>
+                <label>Category</label>
+                <select class="select" id="task_cat">
+                  <option>Clinical</option><option>Admin</option><option>Therapy</option><option>Discharge</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Due Date</label>
+                <input class="input" id="task_due" type="datetime-local" />
+              </div>
+              <div>
+                <label>Priority</label>
+                <select class="select" id="task_pri">
+                  <option>Low</option><option>Medium</option><option>High</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Recurring</label>
+                <select class="select" id="task_rec">
+                  <option>No</option>
+                  <option>Daily</option>
+                  <option>Weekly</option>
+                  <option>Monthly</option>
+                </select>
+              </div>
+              <div>
+                <label>Status</label>
+                <select class="select" id="task_status">
+                  <option>To-do</option>
+                  <option>In Progress</option>
+                  <option>Completed</option>
+                  <option>Overdue</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Notes</label>
+              <textarea id="task_note" placeholder="Add task details..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd"><strong>Task Board (Preview)</strong><span class="pill">My tasks</span></div>
+          <div class="bd">
+            <div class="row">
+              <span class="tag warn">🟡 3 Overdue</span>
+              <span class="tag good">✅ 9 Completed</span>
+            </div>
+            <div class="divider"></div>
+            <table class="table">
+              <thead><tr><th>Task</th><th>Assigned</th><th>Due</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Therapy session logging</td><td>Allied Health</td><td>Today 16:00</td><td><span class="tag warn">In Progress</span></td></tr>
+                <tr><td>Weekly med room stock check</td><td>Nurse-in-Charge</td><td>Yesterday</td><td><span class="tag warn">Overdue</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INCIDENTS -->
+    <section id="view-incidents" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Incident, Risk & Safety</h2>
+          <div class="sub">Falls, medication issues, equipment, visitor incidents (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('incident')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('incident')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd"><strong>New Incident Report</strong><span class="pill">Audit trail</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Incident Type</label>
+                <select class="select" id="inc_type">
+                  <option>Fall</option>
+                  <option>Medication</option>
+                  <option>Equipment</option>
+                  <option>Visitor</option>
+                </select>
+              </div>
+              <div>
+                <label>Severity</label>
+                <select class="select" id="inc_sev">
+                  <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Patient (optional)</label>
+                <select class="select" id="inc_patient">
+                  <option>— None —</option>
+                  <option>Mr Tan</option>
+                  <option>Mdm Lim</option>
+                </select>
+              </div>
+              <div>
+                <label>Ward</label>
+                <select class="select" id="inc_ward">
+                  <option>Ward 1</option><option>Ward 2</option><option>Ward 3</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Date/Time</label>
+                <input class="input" id="inc_dt" type="datetime-local" />
+              </div>
+              <div>
+                <label>Assign Follow-up To</label>
+                <select class="select" id="inc_assign">
+                  <option>Nurse-in-Charge</option>
+                  <option>Doctor on Duty</option>
+                  <option>Ops Admin</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Description</label>
+              <textarea id="inc_desc" placeholder="Describe what happened..."></textarea>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Immediate Action Taken</label>
+                <textarea id="inc_action" placeholder="Actions taken immediately..."></textarea>
+              </div>
+              <div>
+                <label>Attach Evidence (preview)</label>
+                <input class="input" id="inc_file" type="file" multiple />
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="cols">
+              <div>
+                <label>Closure Workflow (preview)</label>
+                <select class="select" id="inc_close">
+                  <option>Open</option><option>Under Review</option><option>Closed</option>
+                </select>
+              </div>
+              <div>
+                <label>Root Cause Analysis (optional)</label>
+                <input class="input" id="inc_rca" placeholder="e.g., wet floor, missing signage..." />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd"><strong>Incident Trends (Preview)</strong><span class="pill">Analytics</span></div>
+          <div class="bd">
+            <div class="row">
+              <span class="tag warn">Falls: 3 (30d)</span>
+              <span class="tag warn">Medication: 1 (30d)</span>
+              <span class="tag good">Resolved: 78%</span>
+            </div>
+            <div class="divider"></div>
+            <table class="table">
+              <thead><tr><th>Date</th><th>Type</th><th>Severity</th><th>Ward</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Feb 11</td><td>Fall</td><td><span class="tag warn">High</span></td><td>Ward 2</td><td><span class="tag warn">Under Review</span></td></tr>
+                <tr><td>Feb 07</td><td>Equipment</td><td><span class="tag good">Low</span></td><td>Ward 1</td><td><span class="tag good">Closed</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCHARGE -->
+    <section id="view-discharge" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Discharge Planning</h2>
+          <div class="sub">Criteria + checklist + discharge summary + referrals (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('discharge')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('discharge')">Preview submit</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 7;">
+          <div class="hd"><strong>Discharge Checklist</strong><span class="pill">Compliance</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Patient</label>
+                <select class="select" id="dis_patient">
+                  <option>Mr Tan</option><option>Mdm Lim</option>
+                </select>
+              </div>
+              <div>
+                <label>Discharge Target Date</label>
+                <input class="input" id="dis_target" type="date" />
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="row" style="flex-direction:column; align-items:flex-start;">
+              <label class="tag"><input type="checkbox" id="dis_c1" /> Discharge criteria met</label>
+              <label class="tag"><input type="checkbox" id="dis_c2" /> Caregiver education completed</label>
+              <label class="tag"><input type="checkbox" id="dis_c3" /> Home care referral sent</label>
+              <label class="tag"><input type="checkbox" id="dis_c4" /> Medication reconciliation completed</label>
+              <label class="tag"><input type="checkbox" id="dis_c5" /> Follow-up appointment scheduled</label>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="cols">
+              <div>
+                <label>Referral Destination</label>
+                <select class="select" id="dis_ref">
+                  <option>Home care</option>
+                  <option>Outpatient services</option>
+                  <option>Community care partner</option>
+                </select>
+              </div>
+              <div>
+                <label>Appointment Notes (export later)</label>
+                <input class="input" id="dis_appt" placeholder="e.g., Polyclinic follow-up in 2 weeks" />
+              </div>
+            </div>
+
+            <div style="margin-top:12px;">
+              <label>Discharge Summary (template preview)</label>
+              <textarea id="dis_summary" placeholder="Diagnosis, treatment provided, functional status, follow-up plan..."></textarea>
+            </div>
+
+            <div class="row" style="margin-top:12px;">
+              <button class="btn" onclick="fakeExport('Discharge summary PDF')">Export PDF (fake)</button>
+              <button class="btn" onclick="fakeExport('Medical Certificate')">Issue MC (fake)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 5;">
+          <div class="hd"><strong>Discharge Queue (Preview)</strong><span class="pill">Planning</span></div>
+          <div class="bd">
+            <table class="table">
+              <thead><tr><th>Patient</th><th>Status</th><th>Target</th><th>Checklist</th></tr></thead>
+              <tbody>
+                <tr><td>Mdm Lim</td><td><span class="tag warn">Discharge Planning</span></td><td>Feb 16</td><td>3/5</td></tr>
+                <tr><td>Mr Tan</td><td><span class="tag warn">In Care</span></td><td>—</td><td>1/5</td></tr>
+              </tbody>
+            </table>
+            <div class="note">Real build: drilldown, auto tasks, referrals tracking, and discharge audit logs.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="view-reports" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Reporting & Dashboards</h2>
+          <div class="sub">Standard reports + exports (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="fakeExport('Operational report')">Export PDF (fake)</button>
+          <button class="btn primary" onclick="fakeExport('CSV pack')">Export CSV (fake)</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 12;">
+          <div class="hd"><strong>Standard Reports (Preview)</strong><span class="pill">Management</span></div>
+          <div class="bd">
+            <div class="cols3">
+              <div class="hintbox">
+                <b>Admissions & discharges</b><br/>
+                By period, ward, source
+              </div>
+              <div class="hintbox">
+                <b>Escalations & SLA</b><br/>
+                Open/overdue, severity, compliance
+              </div>
+              <div class="hintbox">
+                <b>Vitals alerts</b><br/>
+                Counts, trends, thresholds triggered
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="cols3">
+              <div class="hintbox">
+                <b>Visitor logs</b><br/>
+                Daily exports, restrictions flags
+              </div>
+              <div class="hintbox">
+                <b>Staff productivity</b><br/>
+                Tasks completed, therapy sessions logged
+              </div>
+              <div class="hintbox">
+                <b>Incidents</b><br/>
+                Types, severity, closure rate
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <table class="table">
+              <thead><tr><th>Metric</th><th>West</th><th>East</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>Admissions (30d)</td><td>28</td><td>22</td><td>Sample values</td></tr>
+                <tr><td>Escalation SLA (7d)</td><td>92%</td><td>89%</td><td>Target ≥ 90%</td></tr>
+                <tr><td>Vitals alerts (24h)</td><td>6</td><td>6</td><td>Manual thresholds</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="view-admin" class="view" style="display:none;">
+      <div class="topbar">
+        <div>
+          <h2>Admin Settings</h2>
+          <div class="sub">Configurable wards, roles, escalation rules, vitals thresholds (preview)</div>
+        </div>
+        <div class="right">
+          <button class="btn" onclick="quickFill('admin')">Quick fill</button>
+          <button class="btn primary" onclick="previewForm('admin')">Preview save</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="grid-column: span 6;">
+          <div class="hd"><strong>User & Role Management (Preview)</strong><span class="pill">RBAC</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>User</label>
+                <input class="input" id="admset_user" placeholder="nurse.ward2@tcf.sg" />
+              </div>
+              <div>
+                <label>Role</label>
+                <select class="select" id="admset_role">
+                  <option>Nurse</option><option>Doctor</option><option>Allied Health</option><option>Admin</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Permissions preset</label>
+                <select class="select" id="admset_perm">
+                  <option>Standard</option>
+                  <option>Read-only</option>
+                  <option>Escalation manager</option>
+                </select>
+              </div>
+              <div>
+                <label>Facility scope</label>
+                <select class="select" id="admset_fac">
+                  <option>TCF West</option><option>TCF East</option><option>Both</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="note">Real build includes full audit logs, password policies, SSO options, and activity trail.</div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 6;">
+          <div class="hd"><strong>Config: Escalation Rules (Preview)</strong><span class="pill">Workflow</span></div>
+          <div class="bd">
+            <div class="cols">
+              <div>
+                <label>Rule Name</label>
+                <input class="input" id="rule_name" placeholder="Aspiration risk → Speech Lead" />
+              </div>
+              <div>
+                <label>Trigger Tag</label>
+                <select class="select" id="rule_tag">
+                  <option>Swallowing</option><option>Aspiration Risk</option><option>Wound Care</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cols" style="margin-top:12px;">
+              <div>
+                <label>Assign To</label>
+                <select class="select" id="rule_assign">
+                  <option>Speech Therapist Lead</option><option>Doctor on Duty</option><option>Nurse-in-Charge</option>
+                </select>
+              </div>
+              <div>
+                <label>SLA</label>
+                <select class="select" id="rule_sla">
+                  <option>2 hours</option><option>6 hours</option><option>24 hours</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <label>Vitals threshold preset (preview)</label>
+            <select class="select" id="rule_vitals">
+              <option>Default facility thresholds</option>
+              <option>Ward-specific thresholds</option>
+              <option>Patient-specific baselines</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: span 12;">
+          <div class="hd"><strong>Audit & Retention (Preview)</strong><span class="pill">Governance</span></div>
+          <div class="bd">
+            <div class="cols3">
+              <div class="hintbox"><b>Audit Logs</b><br/>Escalations, edits, logins, exports</div>
+              <div class="hintbox"><b>Retention</b><br/>e.g., 6–7 years per policy</div>
+              <div class="hintbox"><b>Backup</b><br/>Daily backups, restore tests (real build)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // In-memory previews (reset on refresh)
+  const previews = [];
+
+  function $(id){ return document.getElementById(id); }
+
+  function fillDemo(){
+    $("loginEmail").value = "admin@tcf.sg";
+    $("loginPw").value = "password";
+    $("login2fa").value = "123456";
+    $("loginFacility").value = "TCF West";
+    $("loginRole").value = "Admin";
+    $("loginDemo").value = "On (recommended)";
+  }
+
+  function doLogin(){
+    // no auth, just enter
+    const facility = $("loginFacility").value;
+    const role = $("loginRole").value;
+    $("pillFacility").textContent = facility;
+    $("pillRole").textContent = role;
+
+    $("loginOverlay").style.display = "none";
+    $("appRoot").style.display = "grid";
+    refreshRecent();
+  }
+
+  function logout(){
+    // reset session-only
+    previews.length = 0;
+    $("appRoot").style.display = "none";
+    $("loginOverlay").style.display = "grid";
+    // reset nav
+    document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+    document.querySelector('.nav button[data-view="dashboard"]').classList.add("active");
+    showView("dashboard");
+  }
+
+  function showView(key, btn){
+    document.querySelectorAll(".view").forEach(v => v.style.display = "none");
+    const target = document.getElementById("view-" + key);
+    if(target) target.style.display = "block";
+
+    if(btn){
+      document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+  }
+
+  function pushPreview(type, title, details){
+    const ts = new Date().toLocaleString();
+    previews.unshift({ts, type, title, details});
+    if(previews.length > 8) previews.pop();
+    refreshRecent();
+  }
+
+  function refreshRecent(){
+    const box = $("recentList");
+    if(!box) return;
+
+    if(previews.length === 0){
+      box.className = "hintbox";
+      box.innerHTML = "No preview submissions yet. Submit any form and it’ll appear here (in-memory).";
+      return;
+    }
+    box.className = "";
+    box.innerHTML = `
+      <table class="table">
+        <thead><tr><th>Time</th><th>Type</th><th>Summary</th></tr></thead>
+        <tbody>
+          ${previews.map(p => `
+            <tr>
+              <td>${p.ts}</td>
+              <td>${p.type}</td>
+              <td><b>${escapeHtml(p.title)}</b><div class="muted" style="margin-top:4px;">${escapeHtml(p.details)}</div></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function clearPreviews(){
+    previews.length = 0;
+    refreshRecent();
+    toast("Cleared preview submissions.");
+  }
+
+  function seedSample(){
+    pushPreview("Admission","Mr Tan Wei Ming admitted","West • Ward 2 • R12 Bed 14 • Dx: Post-stroke, Dysphagia");
+    pushPreview("Clinical Note","Aspiration risk during feeding","Tag: Swallowing • Urgency: Important • Escalation: Yes");
+    pushPreview("Escalation","Speech Therapist review","Priority: Critical • SLA: 2h • Status: Open");
+    pushPreview("Vitals","SpO₂ recorded 92%","Flagged abnormal • Escalate if critical: On");
+    pushPreview("Visitor","Visitor check-in: Ms Tan Mei","Patient: Mr Tan • Slot: 10:00–11:00");
+    toast("Seeded sample previews.");
+  }
+
+  function quickFill(kind){
+    const now = new Date();
+    const toLocal = (d) => {
+      const pad = (n)=> String(n).padStart(2,"0");
+      const yyyy = d.getFullYear();
+      const mm = pad(d.getMonth()+1);
+      const dd = pad(d.getDate());
+      const hh = pad(d.getHours());
+      const mi = pad(d.getMinutes());
+      return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+    };
+
+    if(kind === "admission"){
+      $("adm_name").value = "Mr Tan Wei Ming";
+      $("adm_nric").value = "S1234567A";
+      $("adm_dob").value = "1954-05-10";
+      $("adm_gender").value = "Male";
+      $("adm_phone").value = "+65 9123 4567";
+      $("adm_addr").value = "Singapore";
+      $("adm_nok").value = "Ms Tan Mei";
+      $("adm_nok_rel").value = "Daughter";
+      $("adm_nok_phone").value = "+65 8234 5678";
+      $("adm_ref").value = "Hospital";
+      $("adm_dx").value = "Post-stroke • Dysphagia • HTN";
+      $("adm_iso").value = "No";
+      $("adm_ward").value = "Ward 2";
+      $("adm_bed").value = "R12 • Bed 14";
+      $("adm_dt").value = toLocal(now);
+      $("adm_doc").value = "Doctor on Duty";
+      $("chk_consent").checked = true;
+      $("chk_ref").checked = true;
+      $("chk_medrec").checked = false;
+      $("chk_fall").checked = true;
+      $("adm_status").value = "Admitted";
+      toast("Admission form filled.");
+    }
+
+    if(kind === "note"){
+      $("note_patient").value = "Mr Tan (West • W2 • B14)";
+      $("note_role").value = "Nursing";
+      $("note_tag").value = "Swallowing";
+      $("note_urg").value = "Important";
+      $("note_text").value = "Patient coughing during feeding. Consider thickened fluids. Monitor SpO₂ and consult speech therapist.";
+      $("note_pin").checked = true;
+      $("note_escalate").checked = true;
+      toast("Note form filled.");
+    }
+
+    if(kind === "escalation"){
+      $("esc_patient").value = "Mr Tan (West • W2 • B14)";
+      $("esc_note").value = "Aspiration risk during feeding (Nursing)";
+      $("esc_type").value = "Clinical";
+      $("esc_priority").value = "Critical";
+      $("esc_assign").value = "Speech Therapist Lead";
+      const sla = new Date(Date.now() + 2*60*60*1000);
+      $("esc_sla").value = toLocal(sla);
+      $("esc_desc").value = "Please assess swallowing safety and recommend diet modifications. High aspiration risk observed.";
+      $("esc_status").value = "Open";
+      toast("Escalation form filled.");
+    }
+
+    if(kind === "vitals"){
+      $("vit_patient").value = "Mr Tan (West • W2 • B14)";
+      $("vit_source").value = "Manual";
+      $("vit_bp_sys").value = 138;
+      $("vit_bp_dia").value = 86;
+      $("vit_hr").value = 88;
+      $("vit_spo2").value = 92;
+      $("vit_temp").value = 36.9;
+      $("vit_rr").value = 18;
+      $("vit_pain").value = 0;
+      $("vit_wt").value = 65.2;
+      $("vit_glu").value = 6.4;
+      $("vit_note").value = "Slight desaturation post-feeding. Recheck in 30 mins. Encourage upright positioning.";
+      $("vit_rule").value = "Use default thresholds";
+      $("vit_alert").checked = true;
+      $("vit_escalate").checked = true;
+      toast("Vitals form filled.");
+    }
+
+    if(kind === "visitor"){
+      $("vis_name").value = "Ms Tan Mei";
+      $("vis_phone").value = "+65 8234 5678";
+      $("vis_rel").value = "Daughter";
+      $("vis_patient").value = "Mr Tan (West • W2 • B14)";
+      $("vis_purpose").value = "Routine visitation";
+      $("vis_slot").value = "10:00–11:00";
+      $("vis_iso").checked = false;
+      $("vis_badge").checked = true;
+      $("vis_in").value = toLocal(now);
+      $("vis_out").value = "";
+      toast("Visitor form filled.");
+    }
+
+    if(kind === "task"){
+      $("task_name").value = "Nursing rounds • Ward 2";
+      $("task_assign").value = "Nursing Team";
+      $("task_patient").value = "— None —";
+      $("task_cat").value = "Clinical";
+      $("task_due").value = toLocal(new Date(Date.now() + 4*60*60*1000));
+      $("task_pri").value = "Medium";
+      $("task_rec").value = "Daily";
+      $("task_status").value = "To-do";
+      $("task_note").value = "Complete routine ward rounds. Document vitals and any abnormal findings.";
+      toast("Task form filled.");
+    }
+
+    if(kind === "incident"){
+      $("inc_type").value = "Fall";
+      $("inc_sev").value = "High";
+      $("inc_patient").value = "Mr Tan";
+      $("inc_ward").value = "Ward 2";
+      $("inc_dt").value = toLocal(now);
+      $("inc_assign").value = "Nurse-in-Charge";
+      $("inc_desc").value = "Patient found on floor near bed. No loss of consciousness reported.";
+      $("inc_action").value = "Assessed vitals, assisted back to bed, informed doctor, started observation protocol.";
+      $("inc_close").value = "Under Review";
+      $("inc_rca").value = "Bed rails not raised; night lighting insufficient.";
+      toast("Incident form filled.");
+    }
+
+    if(kind === "discharge"){
+      $("dis_patient").value = "Mdm Lim";
+      $("dis_target").value = new Date(Date.now()+3*24*60*60*1000).toISOString().slice(0,10);
+      $("dis_c1").checked = true;
+      $("dis_c2").checked = true;
+      $("dis_c3").checked = false;
+      $("dis_c4").checked = true;
+      $("dis_c5").checked = false;
+      $("dis_ref").value = "Home care";
+      $("dis_appt").value = "Polyclinic follow-up in 2 weeks";
+      $("dis_summary").value = "Dx: CHF, Diabetes. Stable vitals. Continue diet control and daily monitoring. Refer home care for follow-up and medication adherence.";
+      toast("Discharge form filled.");
+    }
+
+    if(kind === "admin"){
+      $("admset_user").value = "nurse.ward2@tcf.sg";
+      $("admset_role").value = "Nurse";
+      $("admset_perm").value = "Standard";
+      $("admset_fac").value = "TCF West";
+      $("rule_name").value = "Aspiration risk → Speech Lead";
+      $("rule_tag").value = "Aspiration Risk";
+      $("rule_assign").value = "Speech Therapist Lead";
+      $("rule_sla").value = "2 hours";
+      $("rule_vitals").value = "Default facility thresholds";
+      toast("Admin settings filled.");
+    }
+  }
+
+  function previewForm(kind){
+    if(kind === "admission"){
+      const title = `${$("adm_name").value || "Unnamed patient"} • ${$("pillFacility").textContent}`;
+      const details = `${$("adm_ward").value} • ${$("adm_bed").value} • Dx: ${$("adm_dx").value || "-" } • Status: ${$("adm_status").value}`;
+      pushPreview("Admission", title, details);
+      toast("Admission preview submitted.");
+      return;
+    }
+
+    if(kind === "note"){
+      const p = $("note_patient").value.split(" (")[0];
+      const title = `${p} • ${$("note_role").value} note`;
+      const details = `Tag: ${$("note_tag").value} • Urgency: ${$("note_urg").value} • Escalation: ${$("note_escalate").checked ? "Yes" : "No"}`;
+      pushPreview("Clinical Note", title, details);
+      toast("Note preview submitted.");
+      if($("note_escalate").checked){
+        pushPreview("Escalation", `${p} • From note`, `Auto-created (preview) • Priority: ${$("note_urg").value === "Critical" ? "Critical" : "High"}`);
+      }
+      return;
+    }
+
+    if(kind === "escalation"){
+      const p = $("esc_patient").value.split(" (")[0];
+      const title = `${p} • ${$("esc_type").value}`;
+      const details = `Priority: ${$("esc_priority").value} • Assigned: ${$("esc_assign").value} • Status: ${$("esc_status").value}`;
+      pushPreview("Escalation", title, details);
+      toast("Escalation preview submitted.");
+      return;
+    }
+
+    if(kind === "vitals"){
+      const p = $("vit_patient").value.split(" (")[0];
+      const spo2 = $("vit_spo2").value || "-";
+      const bp = `${$("vit_bp_sys").value || "-"} / ${$("vit_bp_dia").value || "-"}`;
+      const title = `${p} • Vitals entry`;
+      const details = `BP: ${bp} • SpO₂: ${spo2}% • Alerts: ${$("vit_alert").checked ? "On" : "Off"}`;
+      pushPreview("Vitals", title, details);
+      toast("Vitals preview submitted.");
+      return;
+    }
+
+    if(kind === "visitor"){
+      const title = `${$("vis_name").value || "Visitor"} • ${$("vis_slot").value}`;
+      const details = `Patient: ${$("vis_patient").value.split(" (")[0]} • Isolation: ${$("vis_iso").checked ? "Yes" : "No"}`;
+      pushPreview("Visitor", title, details);
+      toast("Visitor preview submitted.");
+      return;
+    }
+
+    if(kind === "task"){
+      const title = $("task_name").value || "Untitled task";
+      const details = `Assigned: ${$("task_assign").value} • Due: ${$("task_due").value || "-"} • Status: ${$("task_status").value}`;
+      pushPreview("Task", title, details);
+      toast("Task preview submitted.");
+      return;
+    }
+
+    if(kind === "incident"){
+      const title = `${$("inc_type").value} incident • ${$("inc_ward").value}`;
+      const details = `Severity: ${$("inc_sev").value} • Patient: ${$("inc_patient").value} • Status: ${$("inc_close").value}`;
+      pushPreview("Incident", title, details);
+      toast("Incident preview submitted.");
+      return;
+    }
+
+    if(kind === "discharge"){
+      const title = `${$("dis_patient").value} • Discharge planning`;
+      const checked = ["dis_c1","dis_c2","dis_c3","dis_c4","dis_c5"].filter(id => $(id).checked).length;
+      const details = `Target: ${$("dis_target").value || "-"} • Checklist: ${checked}/5 • Referral: ${$("dis_ref").value}`;
+      pushPreview("Discharge", title, details);
+      toast("Discharge preview submitted.");
+      return;
+    }
+
+    if(kind === "admin"){
+      const title = `Config update • ${$("admset_fac").value}`;
+      const details = `User: ${$("admset_user").value} • Role: ${$("admset_role").value} • Rule: ${$("rule_name").value}`;
+      pushPreview("Admin", title, details);
+      toast("Admin preview saved (in-memory).");
+      return;
+    }
+  }
+
+  function fakeExport(name){
+    toast(`${name}: export not implemented (preview only).`);
+  }
+
+  function toast(msg){
+    const t = document.createElement("div");
+    t.textContent = msg;
+    t.style.position = "fixed";
+    t.style.right = "16px";
+    t.style.bottom = "16px";
+    t.style.zIndex = "99";
+    t.style.padding = "10px 12px";
+    t.style.borderRadius = "14px";
+    t.style.border = "1px solid rgba(15,31,22,.14)";
+    t.style.background = "rgba(255,255,255,.92)";
+    t.style.color = "var(--text)";
+    t.style.boxShadow = "0 12px 30px rgba(15,31,22,.18)";
+    t.style.backdropFilter = "blur(10px)";
+    t.style.fontSize = "12px";
+    document.body.appendChild(t);
+    setTimeout(()=>{ t.style.opacity="0"; t.style.transform="translateY(6px)"; t.style.transition=" .2s ease"; }, 1400);
+    setTimeout(()=>{ t.remove(); }, 1800);
+  }
+
+  function escapeHtml(str){
+    return String(str ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+</script>
+</body>
+</html>
